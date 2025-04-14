@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoramento de ETEs - {% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <header class="dashboard-header">
+        <div class="container">
+            <h1 class="dashboard-title">Monitoramento de ETEs</h1>
+            <nav>
+                {% if 'username' in session %}
+                    <span class="user-greeting">Olá, {{ session['username'] }} ({{ session['role'] }})</span>
+                    <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
+                    {% if session['role'] == 'operador' %}
+                        <a href="{{ url_for('adicionar_dados') }}" class="nav-link">Adicionar Dados</a>
+                    {% endif %}
+                    <a href="{{ url_for('logout') }}" class="nav-link">Sair</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <main class="container main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <!-- Para datas do banco (se estiverem em UTC e já ajustadas no backend) -->
+        {% for dado in dados %}
+            {{ dado.data.strftime('%d/%m/%Y %H:%M') }}
+        {% endfor %}
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

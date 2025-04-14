@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="filter-section">
+    <form method="get" class="filter-form">
+        <label class="filter-label">Filtrar por ETE:</label>
+        <select name="ete_id" class="ete-select" onchange="this.form.submit()">
+            <option value="">Todas as ETEs</option>
+            {% for ete in etes %}
+            <option value="{{ ete.id }}" {% if ete_selecionada == ete.id|string %}selected{% endif %}>
+                {{ ete.nome }}
+            </option>
+            {% endfor %}
+        </select>
+    </form>
+</div>
+
+<div class="tabs-container">
+    <div class="tabs-header">
+        <button class="tab-button active" onclick="openTab('flotador')">Flotador</button>
+        <button class="tab-button" onclick="openTab('reator')">Reator</button>
+        <button class="tab-button" onclick="openTab('efluente')">Efluente</button>
+    </div>
+
+    <div id="flotador" class="tab-content" style="display: block;">
+        <h3 class="tab-title">Dados do Flotador</h3>
+        <div class="data-table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>ETE</th>
+                        <th>pH Entrada</th>
+                        <th>Temp. Entrada</th>
+                        <th>DQO Entrada</th>
+                        <th>pH Saída</th>
+                        <th>Temp. Saída</th>
+                        <th>DQO Saída</th>
+                        <th>Eficiência</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dado in dados_flotador %}
+                    <tr>
+                        <td>{{ dado.data.strftime('%d/%m/%Y %H:%M') }}</td>
+                        <td>{{ dado.ete.nome }}</td>
+                        <td>{{ dado.ph_entrada }}</td>
+                        <td>{{ dado.temperatura_entrada }} °C</td>
+                        <td>{{ dado.dqo_entrada }} mg/L</td>
+                        <td>{{ dado.ph_saida }}</td>
+                        <td>{{ dado.temperatura_saida }} °C</td>
+                        <td>{{ dado.dqo_saida }} mg/L</td>
+                        <td class="{% if dado.eficiencia_flotador < 50 %}critical-value{% else %}normal-value{% endif %}">
+                            {{ dado.eficiencia_flotador }}%
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="reator" class="tab-content">
+        <h3 class="tab-title">Dados do Reator Biológico</h3>
+        <div class="data-table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>ETE</th>
+                        <th>pH</th>
+                        <th>Temperatura</th>
+                        <th>SD30</th>
+                        <th>OD</th>
+                        <th>SST</th>
+                        <th>SSV</th>
+                        <th>IVL</th>
+                        <th>DQO</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dado in dados_reator %}
+                    <tr>
+                        <td>{{ dado.data.strftime('%d/%m/%Y %H:%M') }}</td>
+                        <td>{{ dado.ete.nome }}</td>
+                        <td>{{ dado.ph }}</td>
+                        <td>{{ dado.temperatura }} °C</td>
+                        <td>{{ dado.sd30 }} mL/L</td>
+                        <td>{{ dado.od }} mg/L</td>
+                        <td>{{ dado.sst }} mg/L</td>
+                        <td>{{ dado.ssv }} mg/L</td>
+                        <td>{{ dado.ivl }} mL/g</td>
+                        <td class="{% if dado.dqo_reator > 500 %}critical-value{% else %}normal-value{% endif %}">
+                            {{ dado.dqo_reator }} mg/L
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="efluente" class="tab-content">
+        <h3 class="tab-title">Efluente Final</h3>
+        <div class="data-table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>ETE</th>
+                        <th>pH</th>
+                        <th>Cloro</th>
+                        <th>Vazão</th>
+                        <th>Temp.</th>
+                        <th>OD</th>
+                        <th>Nitrogênio</th>
+                        <th>SSD</th>
+                        <th>DQO Final</th>
+                        <th>Eficiência</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for efluente in efluentes %}
+                    <tr>
+                        <td>{{ efluente.data.strftime('%d/%m/%Y %H:%M') }}</td>
+                        <td>{{ efluente.ete.nome }}</td>
+                        <td>{{ efluente.ph }}</td>
+                        <td>{{ efluente.cloro_residual }} mg/L</td>
+                        <td>{{ efluente.vazao }} m³/h</td>
+                        <td>{{ efluente.temperatura }} °C</td>
+                        <td>{{ efluente.od }} mg/L</td>
+                        <td>{{ efluente.nitrogenio_amoniacal }} mg/L</td>
+                        <td>{{ efluente.ssd }} mg/L</td>
+                        <td class="{% if efluente.dqo_final > 100 %}critical-value{% else %}normal-value{% endif %}">
+                            {{ efluente.dqo_final }} mg/L
+                        </td>
+                        <td class="{% if efluente.eficiencia_global < 90 %}critical-value{% else %}normal-value{% endif %}">
+                            {{ efluente.eficiencia_global }}%
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openTab(tabName) {
+        // Esconde todos os conteúdos de abas
+        const tabContents = document.getElementsByClassName('tab-content');
+        for (let i = 0; i < tabContents.length; i++) {
+            tabContents[i].style.display = 'none';
+        }
+
+        // Remove a classe 'active' de todos os botões
+        const tabButtons = document.getElementsByClassName('tab-button');
+        for (let i = 0; i < tabButtons.length; i++) {
+            tabButtons[i].classList.remove('active');
+        }
+
+        // Mostra a aba atual e marca o botão como ativo
+        document.getElementById(tabName).style.display = 'block';
+        event.currentTarget.classList.add('active');
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,136 @@
+/* Variáveis de cores */
+:root {
+    --primary-color: #3498db;
+    --primary-dark: #2980b9;
+    --secondary-color: #2ecc71;
+    --danger-color: #e74c3c;
+    --warning-color: #f39c12;
+    --dark-color: #2c3e50;
+    --light-color: #ecf0f1;
+    --gray-color: #95a5a6;
+    --light-gray: #f5f7fa;
+    --white: #ffffff;
+}
+
+/* Reset e estilos base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: var(--light-gray);
+}
+
+.container {
+    width: 95%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* Cabeçalho */
+.dashboard-header {
+    background-color: var(--dark-color);
+    color: var(--white);
+    padding: 1rem 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.dashboard-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin: 0;
+    display: inline-block;
+}
+
+/* Navegação */
+nav {
+    display: inline-block;
+    float: right;
+}
+
+.nav-link {
+    color: var(--white);
+    text-decoration: none;
+    margin-left: 1.5rem;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+    color: var(--light-color);
+}
+
+.user-greeting {
+    margin-right: 1rem;
+    color: var(--light-color);
+}
+
+/* Rodapé */
+.dashboard-footer {
+    text-align: center;
+    padding: 1.5rem;
+    color: var(--gray-color);
+    font-size: 0.9rem;
+    margin-top: 2rem;
+}
+
+/* Alertas */
+.alert {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 6px;
+}
+
+.alert-danger {
+    background-color: rgba(231, 76, 60, 0.1);
+    border-left: 4px solid var(--danger-color);
+    color: #c0392b;
+}
+
+/* Utilitários */
+.text-center {
+    text-align: center;
+}
+
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mt-4 { margin-top: 2rem; }
+
+.main-content {
+    padding: 2rem 0;
+}
+
+/* Estilo base para todos os botões */
+.btn {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin: 0.3rem;
+}
+
+/* Efeito hover para todos os botões */
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* Efeito ativo (quando clicado) */
+.btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+}

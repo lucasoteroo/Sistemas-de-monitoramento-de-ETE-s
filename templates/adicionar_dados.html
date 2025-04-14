@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}Adicionar Dados da ETE{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Adicionar Dados da ETE {{ etes[0].nome }}</h2>
+    
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+    
+    <form method="POST" action="{{ url_for('adicionar_dados') }}">
+        <input type="hidden" name="ete_id" value="{{ etes[0].id }}">
+        
+        <!-- Seção Flotador -->
+        <div class="form-section">
+            <h3 class="section-title">Dados do Flotador</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="ph_entrada">pH Entrada:</label>
+                    <input type="number" step="0.1" id="ph_entrada" name="ph_entrada" min="0" max="14" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="temp_entrada">Temperatura Entrada (°C):</label>
+                    <input type="number" step="0.1" id="temp_entrada" name="temp_entrada" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="dqo_entrada">DQO Entrada (mg/L):</label>
+                    <input type="number" id="dqo_entrada" name="dqo_entrada" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="ph_saida">pH Saída:</label>
+                    <input type="number" step="0.1" id="ph_saida" name="ph_saida" min="0" max="14" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="temp_saida">Temperatura Saída (°C):</label>
+                    <input type="number" step="0.1" id="temp_saida" name="temp_saida" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="dqo_saida">DQO Saída (mg/L):</label>
+                    <input type="number" id="dqo_saida" name="dqo_saida" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="eficiencia_flotador">Eficiência Flotador (%):</label>
+                    <input type="number" step="0.01" id="eficiencia_flotador" name="eficiencia_flotador" min="0" max="100" required>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Seção Reator Biológico -->
+        <div class="form-section">
+            <h3 class="section-title">Dados do Reator Biológico</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="ph_reator">pH:</label>
+                    <input type="number" step="0.1" id="ph_reator" name="ph_reator" min="0" max="14" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="temp_reator">Temperatura (°C):</label>
+                    <input type="number" step="0.1" id="temp_reator" name="temp_reator" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="sd30">SD30 (mL/L):</label>
+                    <input type="number" step="0.01" id="sd30" name="sd30" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="od">OD (mg/L):</label>
+                    <input type="number" step="0.1" id="od" name="od" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="sst">SST (mg/L):</label>
+                    <input type="number" id="sst" name="sst" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="ssv">SSV (mg/L):</label>
+                    <input type="number" id="ssv" name="ssv" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="ivl">IVL (mL/g):</label>
+                    <input type="number" step="0.01" id="ivl" name="ivl" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="dqo_reator">DQO Reator (mg/L):</label>
+                    <input type="number" id="dqo_reator" name="dqo_reator" min="0" required>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Seção Efluente Final -->
+        <div class="form-section">
+            <h3 class="section-title">Efluente Final</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="ph_final">pH:</label>
+                    <input type="number" step="0.1" id="ph_final" name="ph_final" min="0" max="14" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cloro">Cloro Residual (mg/L):</label>
+                    <input type="number" step="0.1" id="cloro" name="cloro" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="vazao">Vazão (m³/h):</label>
+                    <input type="number" id="vazao" name="vazao" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="temp_final">Temperatura (°C):</label>
+                    <input type="number" step="0.1" id="temp_final" name="temp_final" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="od_final">OD (mg/L):</label>
+                    <input type="number" step="0.1" id="od_final" name="od_final" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="nitrogenio">Nitrogênio Amoniacal (mg/L):</label>
+                    <input type="number" step="0.01" id="nitrogenio" name="nitrogenio" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="ssd">SSD (mg/L):</label>
+                    <input type="number" id="ssd" name="ssd" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="dqo_final">DQO Final (mg/L):</label>
+                    <input type="number" id="dqo_final" name="dqo_final" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="eficiencia_saida">Eficiência Saída (%):</label>
+                    <input type="number" step="0.01" id="eficiencia_saida" name="eficiencia_saida" min="0" max="100" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="eficiencia_global">Eficiência Global (%):</label>
+                    <input type="number" step="0.01" id="eficiencia_global" name="eficiencia_global" min="0" max="100" required>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label for="observacoes">Observações:</label>
+                    <textarea id="observacoes" name="observacoes" rows="3" class="form-textarea"></textarea>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Salvar Dados</button>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
