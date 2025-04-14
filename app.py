@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask_bcrypt import Bcrypt
 from datetime import datetime, timedelta
 import pytz
 import pymysql
@@ -11,6 +12,7 @@ load_dotenv()
 pymysql.install_as_MySQLdb()
 
 app = Flask(__name__)
+bcrypt = Bcrypt(app)
 app.secret_key = os.getenv('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # ✅ Boa prática
@@ -23,10 +25,21 @@ timezone = pytz.timezone('America/Sao_Paulo')
 class Usuario(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
-    password = db.Column(db.String(50), nullable=False)
+    password = db.Column(db.String(100), nullable=False)  # Agora armazena o hash
     role = db.Column(db.String(10), nullable=False)
     unidade = db.Column(db.String(50), nullable=True)
-
+    
+    @property
+    def plain_password(self):
+        raise AttributeError('A senha em texto plano não está disponível para leitura')
+    
+    @plain_password.setter
+    def plain_password(self, password):
+        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+    
+    def verify_password(self, password):
+        return bcrypt.check_password_hash(self.password, password)  # Agora lê direto do campo password
+    
 class ETE(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
@@ -96,14 +109,17 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        user = Usuario.query.filter_by(username=username, password=password).first()
-        if user:
+        username = request.form.get('username', '').strip()
+        password = request.form.get('password', '')
+        
+        user = Usuario.query.filter_by(username=username).first()
+        
+        if user and user.verify_password(password):  
             session['username'] = user.username
             session['role'] = user.role
             session['unidade'] = user.unidade
             return redirect(url_for('dashboard'))
+        
         flash('Credenciais inválidas', 'danger')
     return render_template('login.html')
 
@@ -111,6 +127,8 @@ def login():
 def logout():
     session.clear()
     return redirect(url_for('login'))
+
+
 
 @app.route('/dashboard')
 def dashboard():
@@ -215,12 +233,16 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
         if not Usuario.query.first():
-            gerente = Usuario(username='gerente', password='1234', role='gerente')
-            ete1 = ETE(nome='ETE Norte', localizacao='Zona Industrial Norte', capacidade=5000)
-            ete2 = ETE(nome='ETE Sul', localizacao='Zona Residencial Sul', capacidade=3000)
-            operador1 = Usuario(username='operador_norte', password='1234', role='operador', unidade='ETE Norte')
-            operador2 = Usuario(username='operador_sul', password='1234', role='operador', unidade='ETE Sul')
-            db.session.add_all([gerente, ete1, ete2, operador1, operador2])
+            gerente = Usuario(username='gerente', role='gerente')
+            gerente.plain_password = '1234'  # Usa o setter para criar o hash
+            
+            operador1 = Usuario(username='operador_norte', role='operador', unidade='ETE Norte')
+            operador1.plain_password = '1234'
+            
+            operador2 = Usuario(username='operador_sul', role='operador', unidade='ETE Sul')
+            operador2.plain_password = '1234'
+            
+            db.session.add_all([gerente, operador1, operador2])
             db.session.commit()
 
     app.run(debug=True)
